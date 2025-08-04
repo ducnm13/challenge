@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHALLENGE | CÀ PHÊ HÒA TAN</title>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./favicon_io/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./favicon_io/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./favicon_io/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./favicon_io/site.webmanifest" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h2 class="text-center">TÍNH TOÁN THÀNH PHẨM CÀ PHÊ HÒA TAN</h2>
+
+        <h3>NHÓM COP28</h3>
+        <div class="input-group mb-3">
+          <input
+            id="nl"
+            type="text"
+            class="form-control"
+            placeholder="Nhập số lượng bột"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <div class="input-group-text">
+            <input
+              class="form-check-input mt-0 dt-check"
+              type="checkbox"
+              value="COP18"
+            />
+          </div>
+          <span class="input-group-text">COP18 (6.12KG/Thùng)</span>
+          <input
+            type="text"
+            class="form-control"
+            id="sl-COP18"
+            placeholder="Nhập số thùng bạn muốn sản xuất"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <div class="input-group-text">
+            <input
+              class="form-check-input mt-0 dt-check"
+              type="checkbox"
+              value="COP21"
+            />
+          </div>
+          <span class="input-group-text">COP21 (7.14KG/Thùng)</span>
+          <input
+            type="text"
+            class="form-control"
+            id="sl-COP21"
+            placeholder="Nhập số thùng bạn muốn sản xuất"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <div class="input-group-text">
+            <input
+              class="form-check-input mt-0 dt-check"
+              type="checkbox"
+              value="COP20"
+            />
+          </div>
+          <span class="input-group-text">COP20 (6.8KG/Thùng)</span>
+          <input
+            type="text"
+            class="form-control"
+            id="sl-COP20"
+            placeholder="Nhập số thùng bạn muốn sản xuất"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <div class="input-group-text">
+            <input
+              class="form-check-input mt-0 dt-check"
+              type="checkbox"
+              value="COP50"
+            />
+          </div>
+          <span class="input-group-text">COP50 (8.5KG/Thùng)</span>
+          <input
+            type="text"
+            class="form-control"
+            id="sl-COP50"
+            placeholder="Nhập số thùng bạn muốn sản xuất"
+          />
+        </div>
+        <h3>CÀ PHÊ HOÀN TAN</h3>
+        <div class="input-group mb-3">
+          <span class="input-group-text">Quán (7.2KG/Thùng)</span>
+          <input
+            type="text"
+            class="form-control"
+            id="kg-CFQUAN"
+            placeholder="Nhập bột cà phê Quán"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text">ĐTHT (5.75KG/Thùng)</span>
+          <input
+            type="text"
+            class="form-control"
+            id="kg-DTHT"
+            placeholder="Nhập bột cà phê ĐTHT"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text">Collagen (5.75KG/Thùng)</span>
+          <input
+            type="text"
+            class="form-control"
+            id="kg-COL"
+            placeholder="Nhập bột cà phê Collagen"
+          />
+        </div>
+        <button type="button" class="btn btn-primary" onclick="funcs()">
+          Tính toán
+        </button>
+        <div id="result"></div>
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+    crossorigin="anonymous"
+  ></script>
+  <script src="./script.js"></script>
+</html>
