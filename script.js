@@ -62,11 +62,33 @@ function funcs() {
     goiYHTML += `</div>`;
   }
 
+  //Xử lý nhóm cà phê bột
+  const honey = 0.25;
+  const hh = 0.34;
+
+  let txt_honey = parseFloat(document.getElementById("kg-HONEY").value);
+  let txt_hh = parseFloat(document.getElementById("kg-HH").value);
+
+  let cf_bot = "";
+  cf_bot = `<div class="result"><h4>Kết quả:</h4><br/>`;
+
+  if (!isNaN(txt_honey) & (txt_honey > 0)) {
+    let sl_bbhn = Math.floor(txt_honey / honey);
+    cf_bot += `<p><span class="nmd"><i class="bi bi-caret-right-fill"></i> CF HONEY: </span><span class="fw-medium"> ${sl_bbhn} túi </span>`;
+  }
+
+  if (!isNaN(txt_hh) & (txt_hh > 0)) {
+    let sl_bbhh = Math.floor(txt_hh / hh);
+    cf_bot += `<p><span class="nmd"><i class="bi bi-caret-right-fill"></i> CF HOÀN HẢO: </span><span class="fw-medium"> ${sl_bbhh} túi </span>`;
+  }
+
+  cf_bot += `</div>`;
   //   Xử lý nhóm sản phẩm khác
-  let otherProduct = `<div class="result"><h4>Kết quả:</h4><br/>`;
+  let otherProduct = "";
   for (let a in CFHT) {
     let kgInput = parseFloat(document.getElementById("kg-" + a).value);
     if (!isNaN(kgInput) && kgInput > 0) {
+      otherProduct += `<div class="result"><h4>Kết quả:</h4><br/>`;
       let slThung = Math.floor(kgInput / CFHT[a].kg);
       let baoBi = slThung * CFHT[a].bb;
       let c = CFHT[a].d;
@@ -103,7 +125,7 @@ function funcs() {
     html += `<div class="error">${errHTML}</div>`;
   }
 
-  html += goiYHTML + otherProduct;
+  html += goiYHTML + otherProduct + cf_bot;
 
   document.getElementById("result").innerHTML = html;
 }
