@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hệ thống tính toán đóng date</title>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./images/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./images/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./images/favicon/site.webmanifest" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+      }
+      /* Tùy chỉnh ẩn hiện khi in ấn */
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        .print-only {
+          display: block !important;
+        }
+        body {
+          background: white;
+        }
+        .shadow-lg {
+          box-shadow: none !important;
+        }
+        .border {
+          border: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 text-slate-800 min-h-screen py-8 px-4">
+    <div
+      class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200"
+    >
+      <div class="bg-blue-600 p-6 text-white flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-8 w-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+              />
+            </svg>
+            KẾ HOẠCH ĐÓNG DATE SẢN PHẨM
+          </h1>
+          <p class="text-blue-100 text-sm mt-1">
+            Công cụ tính toán số lượng bao bì sản xuất
+          </p>
+        </div>
+        <button
+          onclick="window.print()"
+          class="no-print bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+            />
+          </svg>
+          In Phiếu
+        </button>
+      </div>
+
+      <div class="p-6 md:p-8 space-y-8">
+        <div class="bg-blue-50 border border-blue-100 rounded-xl p-5">
+          <label
+            class="block text-blue-800 font-semibold mb-2 uppercase text-xs tracking-wider"
+            >Chọn Sản Phẩm</label
+          >
+          <h2
+            id="print-product-name"
+            class="hidden print-only text-xl font-bold mb-4"
+          ></h2>
+
+          <div class="relative no-print">
+            <select
+              id="productSelector"
+              onchange="loadProductConfig()"
+              class="w-full appearance-none bg-white border border-blue-200 text-gray-700 py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500 font-medium shadow-sm transition"
+            ></select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-500"
+            >
+              <svg
+                class="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="col-span-1">
+            <label class="block text-slate-600 font-medium mb-2 text-sm"
+              >Tổng Bột Trộn (KG)</label
+            >
+            <div class="relative">
+              <input
+                type="number"
+                id="totalWeight"
+                value="100"
+                oninput="calculate()"
+                class="w-full pl-4 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-bold text-slate-800 text-lg shadow-sm"
+              />
+              <span class="absolute right-4 top-3.5 text-slate-400 font-medium"
+                >KG</span
+              >
+            </div>
+          </div>
+
+          <div class="col-span-1">
+            <label class="block text-slate-600 font-medium mb-2 text-sm"
+              >Hao hụt dự kiến (%)</label
+            >
+            <div class="relative">
+              <input
+                type="number"
+                id="lossPercent"
+                value="2"
+                oninput="calculate()"
+                class="w-full pl-4 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-bold text-slate-800 text-lg shadow-sm"
+              />
+              <span class="absolute right-4 top-3.5 text-slate-400 font-medium"
+                >%</span
+              >
+            </div>
+          </div>
+
+          <div class="col-span-1">
+            <label class="block text-slate-600 font-medium mb-2 text-sm"
+              >Trọng lượng tịnh 01 gói</label
+            >
+            <div class="relative">
+              <input
+                type="number"
+                id="netWeight"
+                disabled
+                class="bg-slate-100 w-full pl-4 pr-12 py-3 border border-slate-200 rounded-lg text-slate-500 font-medium cursor-not-allowed"
+              />
+              <span class="absolute right-4 top-3.5 text-slate-400 font-medium"
+                >Gr</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-slate-100" />
+
+        <div>
+          <div class="flex justify-between items-end mb-4">
+            <h3 class="text-lg font-bold text-slate-700">Phân Bổ & Kết Quả</h3>
+            <div
+              id="alert-box"
+              class="text-sm px-3 py-1 rounded-full font-medium hidden"
+            ></div>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-slate-200">
+            <table class="w-full text-left border-collapse">
+              <thead
+                class="bg-slate-50 text-slate-500 uppercase text-xs font-bold tracking-wider"
+              >
+                <tr>
+                  <th class="p-4 border-b border-slate-200">Quy Cách (SKU)</th>
+                  <th class="p-4 border-b border-slate-200 text-center">
+                    Đóng gói
+                  </th>
+                  <th class="p-4 border-b border-slate-200 text-center w-32">
+                    Tỷ lệ (%)
+                  </th>
+                  <th class="p-4 border-b border-slate-200 text-right">
+                    SL Bao bì (In Date)
+                  </th>
+                  <th class="p-4 border-b border-slate-200 text-right">
+                    SL Gói
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="skuTableBody"
+                class="divide-y divide-slate-100"
+              ></tbody>
+              <tfoot class="bg-slate-100 font-bold text-slate-700">
+                <tr>
+                  <td
+                    colspan="4"
+                    class="p-4 text-right uppercase border-t border-slate-300"
+                  >
+                    Tổng cộng số lượng gói:
+                  </td>
+                  <td
+                    class="p-4 text-right text-emerald-700 text-xl border-t border-slate-300"
+                    id="grand-total-sticks"
+                  >
+                    0
+                    <span class="text-xs text-slate-400 block">Gói</span>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-slate-50 px-6 py-4 border-t border-slate-200 text-center md:text-right no-print"
+      >
+        <span class="text-slate-400 text-sm"
+          >Hệ thống tự động tính toán khi thay đổi giá trị</span
+        >
+      </div>
+    </div>
+
+    <script>
+      // ==========================================
+      // DATABASE SẢN PHẨM (Config)
+      // ==========================================
+      const productDatabase = [
+        {
+          id: "dt",
+          name: "Cà phê Bảo Minh Legacy 4in1 Đông trùng hạ thảo",
+          netWeight: 24,
+          skus: [{ name: "Hộp 12 gói", packCount: 12, defaultRatio: 100 }],
+        },
+        {
+          id: "clg",
+          name: "Cà phê Bảo Minh Legacy 4in1 Collagen",
+          netWeight: 24,
+          skus: [{ name: "Hộp 12 gói", packCount: 12, defaultRatio: 100 }],
+        },
+        {
+          id: "cop28",
+          name: "Cà phê COP28 hoà tan 3in1",
+          netWeight: 17,
+          skus: [
+            { name: "Hộp 10 gói", packCount: 10, defaultRatio: 25 },
+            { name: "Hộp 18 gói", packCount: 18, defaultRatio: 25 },
+            { name: "Túi 20 gói", packCount: 20, defaultRatio: 25 },
+            { name: "Túi 50 gói", packCount: 50, defaultRatio: 25 },
+          ],
+        },
+        {
+          id: "gold",
+          name: "Cà phê Quán Gold hoà tan 3in1",
+          netWeight: 24,
+          skus: [
+            { name: "Hộp 12 gói", packCount: 12, defaultRatio: 40 },
+            { name: "Túi 18 gói", packCount: 18, defaultRatio: 30 },
+            { name: "Túi 36 gói", packCount: 36, defaultRatio: 30 },
+          ],
+        },
+        {
+          id: "matcha",
+          name: "Matcha hoà tan Bảo Minh Legacy",
+          netWeight: 17,
+          skus: [{ name: "Hộp 12 gói", packCount: 12, defaultRatio: 100 }],
+        },
+        {
+          id: "cacao",
+          name: "Cacao hoà tan Bảo Minh Legacy",
+          netWeight: 24,
+          skus: [{ name: "Hộp 12 gói", packCount: 12, defaultRatio: 100 }],
+        },
+      ];
+
+      // ==========================================
+      // LOGIC JAVASCRIPT
+      // ==========================================
+
+      const selector = document.getElementById("productSelector");
+      const tableBody = document.getElementById("skuTableBody");
+      const alertBox = document.getElementById("alert-box");
+      let currentProduct = null;
+
+      function init() {
+        productDatabase.forEach((prod) => {
+          let option = document.createElement("option");
+          option.value = prod.id;
+          option.text = prod.name;
+          selector.add(option);
+        });
+        loadProductConfig();
+      }
+
+      function loadProductConfig() {
+        const selectedId = selector.value;
+        currentProduct = productDatabase.find((p) => p.id === selectedId);
+
+        document.getElementById("print-product-name").innerText =
+          currentProduct.name;
+        document.getElementById("netWeight").value = currentProduct.netWeight;
+
+        tableBody.innerHTML = "";
+        currentProduct.skus.forEach((sku, index) => {
+          let row = `
+                <tr class="hover:bg-blue-50/50 transition-colors">
+                    <td class="p-4 font-medium text-slate-700">${sku.name}</td>
+                    <td class="p-4 text-center text-slate-500"><span class="bg-slate-200 text-slate-700 py-1 px-2 rounded text-xs font-bold">${sku.packCount} gói</span></td>
+                    <td class="p-4 text-center">
+                        <input type="number" class="ratio-input w-20 text-center font-bold text-blue-600 border-b-2 border-blue-200 focus:border-blue-600 outline-none bg-transparent p-1 transition-all" 
+                               data-pack="${sku.packCount}" 
+                               value="${sku.defaultRatio}" 
+                               oninput="calculate()">
+                    </td>
+                    <td class="p-4 text-right">
+                        <span class="result-cell text-xl font-bold text-emerald-600" id="res-${index}">0</span>
+                        <span class="text-xs text-slate-400 block">Hộp/Túi</span>
+                    </td>
+                    <td class="p-4 text-right">
+                        <span class="result-cell text-xl font-bold text-indigo-600" id="ress-${index}">0</span>
+                        <span class="text-xs text-slate-400 block">Gói</span>
+                    </td>
+                </tr>
+            `;
+          tableBody.innerHTML += row;
+        });
+
+        calculate();
+      }
+
+      function calculate() {
+        if (!currentProduct) return;
+
+        let totalKg =
+          parseFloat(document.getElementById("totalWeight").value) || 0;
+        let netGram = currentProduct.netWeight;
+        let loss =
+          parseFloat(document.getElementById("lossPercent").value) || 0;
+
+        let totalGram = totalKg * 1000 * (1 - loss / 100);
+
+        let inputs = document.getElementsByClassName("ratio-input");
+        let totalRatio = 0;
+
+        // Biến mới để tính tổng toàn bộ các gói
+        let grandTotalSticks = 0;
+
+        Array.from(inputs).forEach((input, index) => {
+          let percent = parseFloat(input.value) || 0;
+          totalRatio += percent;
+
+          let packSize = parseFloat(input.getAttribute("data-pack"));
+          let allocatedPowder = totalGram * (percent / 100);
+          let unitPowder = packSize * netGram;
+
+          let quantity = 0;
+          let quantity_stick = 0; // Khởi tạo biến này mỗi vòng lặp
+
+          if (unitPowder > 0) {
+            quantity = Math.floor(allocatedPowder / unitPowder);
+            quantity_stick = quantity * packSize;
+          }
+
+          // Hiển thị từng dòng
+          document.getElementById(`res-${index}`).innerText =
+            quantity.toLocaleString("vi-VN");
+          document.getElementById(`ress-${index}`).innerText =
+            quantity_stick.toLocaleString("vi-VN");
+
+          // Cộng dồn vào tổng
+          grandTotalSticks += quantity_stick;
+        });
+
+        // Cập nhật số tổng ở chân bảng
+        document.getElementById("grand-total-sticks").innerText =
+          grandTotalSticks.toLocaleString("vi-VN");
+
+        // Xử lý Alert Box
+        alertBox.style.display = "inline-block";
+        alertBox.className =
+          "text-sm px-4 py-2 rounded-full font-bold shadow-sm transition-all duration-300 ";
+
+        if (Math.abs(totalRatio - 100) > 0.1) {
+          alertBox.classList.add("bg-amber-100", "text-amber-700");
+          alertBox.innerHTML = `⚠️ Tổng tỷ lệ: ${totalRatio}% (Chưa đạt 100%)`;
+        } else {
+          alertBox.classList.add("bg-emerald-100", "text-emerald-700");
+          alertBox.innerHTML = `✅ Tỷ lệ chuẩn 100%`;
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>

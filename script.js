@@ -1,131 +1,112 @@
-const COP28 = {
-  COP18: { kg: 6.12, bb: 20, d: "hộp" },
-  COP20: { kg: 6.8, bb: 20, d: "túi" },
-  COP21: { kg: 7.14, bb: 20, d: "hộp" },
-  COP50: { kg: 8.5, bb: 10, d: "túi" },
+/* --- PHẦN 1: COUNTDOWN TIMER --- */
+const countdown = () => {
+  // Đặt ngày đích: 10 ngày kể từ hiện tại (Bạn có thể thay bằng ngày cụ thể)
+  const countDate = new Date().getTime() + 10 * 24 * 60 * 60 * 1000;
+  // Hoặc dùng ngày cố định: const countDate = new Date("Dec 31, 2025 00:00:00").getTime();
+
+  const now = new Date().getTime();
+  const gap = countDate - now;
+
+  // Tính toán thời gian
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+
+  const textDay = Math.floor(gap / day);
+  const textHour = Math.floor((gap % day) / hour);
+  const textMinute = Math.floor((gap % hour) / minute);
+  const textSecond = Math.floor((gap % minute) / second);
+
+  // Cập nhật DOM
+  document.getElementById("days").innerText =
+    textDay < 10 ? "0" + textDay : textDay;
+  document.getElementById("hours").innerText =
+    textHour < 10 ? "0" + textHour : textHour;
+  document.getElementById("minutes").innerText =
+    textMinute < 10 ? "0" + textMinute : textMinute;
+  document.getElementById("seconds").innerText =
+    textSecond < 10 ? "0" + textSecond : textSecond;
 };
-const CFHT = {
-  CFQUAN: { kg: 7.2, bb: 30, d: "hộp" },
-  DTHT: { kg: 5.76, bb: 20, d: " hộp" },
-  COL: { kg: 5.76, bb: 20, d: "hộp" },
-};
 
-function funcs() {
-  let base = parseFloat(document.getElementById("nl").value);
-  const checkbox = document.querySelectorAll(".dt-check:checked");
-  let resultHTML = "";
-  let totalBox = 0;
-  let errHTML = "";
-  let remain = base;
+// Chạy mỗi giây
+setInterval(countdown, 1000);
 
-  for (let i = 0; i < checkbox.length; i++) {
-    let COP = checkbox[i].value;
-    let kg_COP = COP28[COP].kg;
-    let bb_COP = COP28[COP].bb;
-    let d_COP = COP28[COP].d;
-    let txt_SL = document.getElementById("sl-" + COP);
-    let txt_value = parseInt(txt_SL.value);
+/* --- PHẦN 2: BACKGROUND PARTICLES ANIMATION --- */
+const canvas = document.getElementById("bgCanvas");
+const ctx = canvas.getContext("2d");
 
-    if (!isNaN(txt_value)) {
-      let powder = txt_value * kg_COP;
-      if (powder <= remain) {
-        remain -= powder;
-        resultHTML += `<p><span class="nmd"><i class="bi bi-caret-right-fill"></i> ${COP}:</span> <span class="fw-medium">${txt_value} thùng </span> (dùng ${powder.toFixed(
-          2
-        )}kg, cần ${txt_value * bb_COP} ${d_COP} )<br/></p>`;
-        totalBox += txt_value;
-      } else {
-        errHTML += `<p class="fw-medium">❌ Không đủ nguyên liệu cho ${txt_value} thùng ${COP} (Cần ${powder.toFixed(
-          2
-        )}kg, còn lại ${remain.toFixed(2)}kg)</p><br/>`;
-      }
-    } else {
-      let sl = Math.floor(remain / kg_COP);
-      let powder_used = sl * kg_COP;
-      remain -= powder_used;
-      resultHTML += `${COP}: ${sl} thùng (dùng ${powder_used.toFixed(
-        2
-      )}kg, cần ${sl * bb_COP} ${d_COP})<br/>`;
-      totalBox += sl;
-    }
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particlesArray;
+
+// Xử lý khi thay đổi kích thước màn hình
+window.addEventListener("resize", function () {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  init();
+});
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 3 + 1; // Kích thước hạt
+    this.speedX = Math.random() * 1.5 - 0.75;
+    this.speedY = Math.random() * 1.5 - 0.75;
+    this.color = "rgba(255, 255, 255, 0.6)";
   }
 
-  let goiYHTML = "";
-  if (remain > 0.01 && checkbox.length > 0) {
-    goiYHTML += `<div class="suggest"><p>🔍 Với ${remain.toFixed(
-      2
-    )}kg còn lại, bạn có thể sản xuất thêm:</p><br/>`;
-    for (let d in COP28) {
-      let goiY = Math.floor(remain / COP28[d].kg);
-      goiYHTML += `<p><span class="nmd"><i class="bi bi-caret-right-fill"></i> ${d}:</span> <span class="fw-medium">${goiY} thùng<span></p><br/>`;
-    }
-    goiYHTML += `</div>`;
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    // Đảo chiều nếu chạm cạnh màn hình
+    if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+    if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
   }
 
-  //Xử lý nhóm cà phê bột
-  const honey = 0.25;
-  const hh = 0.34;
-
-  let txt_honey = parseFloat(document.getElementById("kg-HONEY").value);
-  let txt_hh = parseFloat(document.getElementById("kg-HH").value);
-
-  let cf_bot = "";
-  cf_bot = `<div class="result"><h4>Kết quả:</h4><br/>`;
-
-  if (!isNaN(txt_honey) & (txt_honey > 0)) {
-    let sl_bbhn = Math.floor(txt_honey / honey);
-    cf_bot += `<p><span class="nmd"><i class="bi bi-caret-right-fill"></i> CF HONEY: </span><span class="fw-medium"> ${sl_bbhn} túi </span>`;
+  draw() {
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
   }
-
-  if (!isNaN(txt_hh) & (txt_hh > 0)) {
-    let sl_bbhh = Math.floor(txt_hh / hh);
-    cf_bot += `<p><span class="nmd"><i class="bi bi-caret-right-fill"></i> CF HOÀN HẢO: </span><span class="fw-medium"> ${sl_bbhh} túi </span>`;
-  }
-
-  cf_bot += `</div>`;
-  //   Xử lý nhóm sản phẩm khác
-  let otherProduct = "";
-  for (let a in CFHT) {
-    let kgInput = parseFloat(document.getElementById("kg-" + a).value);
-    if (!isNaN(kgInput) && kgInput > 0) {
-      otherProduct += `<div class="result"><h4>Kết quả:</h4><br/>`;
-      let slThung = Math.floor(kgInput / CFHT[a].kg);
-      let baoBi = slThung * CFHT[a].bb;
-      let c = CFHT[a].d;
-      let name = "";
-      switch (a) {
-        case "CFQUAN":
-          name = "QUÁN";
-          break;
-
-        case "DTHT":
-          name = "ĐTHT";
-          break;
-
-        case "COL":
-          name = "COLLAGEN";
-          break;
-      }
-      otherProduct += `<p><span class="nmd"><i class="bi bi-caret-right-fill"></i> ${name}:</span><span class="fw-medium"> ${slThung}thùng </span> (dùng ${
-        slThung * CFHT[a].kg
-      }kg, cần ${baoBi} ${c})</p><br/>`;
-    }
-  }
-  otherProduct += `</div>`;
-
-  let html = "";
-
-  if (resultHTML !== "") {
-    html += `<div class="result"><h4>Kết quả:</h4><br/>${resultHTML}<br/><p>👉 Nguyên liệu còn dư: ${remain.toFixed(
-      2
-    )} kg</p><br/><p>👉 Tổng số thùng: ${totalBox}</p</div>`;
-  }
-
-  if (errHTML !== "") {
-    html += `<div class="error">${errHTML}</div>`;
-  }
-
-  html += goiYHTML + otherProduct + cf_bot;
-
-  document.getElementById("result").innerHTML = html;
 }
+
+function init() {
+  particlesArray = [];
+  const numberOfParticles = 100; // Số lượng hạt
+  for (let i = 0; i < numberOfParticles; i++) {
+    particlesArray.push(new Particle());
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < particlesArray.length; i++) {
+    particlesArray[i].update();
+    particlesArray[i].draw();
+
+    // Vẽ đường nối nếu các hạt gần nhau (tạo hiệu ứng mạng lưới)
+    for (let j = i; j < particlesArray.length; j++) {
+      const dx = particlesArray[i].x - particlesArray[j].x;
+      const dy = particlesArray[i].y - particlesArray[j].y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < 100) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 100})`;
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+init();
+animate();
