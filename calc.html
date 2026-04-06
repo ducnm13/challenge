@@ -31,11 +31,10 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
-    <style>
+     <style>
       body {
         font-family: "Montserrat", sans-serif;
       }
-      /* Tùy chỉnh ẩn hiện khi in ấn */
       @media print {
         .no-print {
           display: none !important;
@@ -46,7 +45,8 @@
         body {
           background: white;
         }
-        .shadow-lg {
+        .shadow-xl,
+        .shadow-sm {
           box-shadow: none !important;
         }
         .border {
@@ -57,7 +57,7 @@
   </head>
   <body class="bg-slate-100 text-slate-800 min-h-screen py-8 px-4">
     <div
-      class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200"
+      class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200"
     >
       <div class="bg-blue-600 p-6 text-white flex justify-between items-center">
         <div>
@@ -114,7 +114,6 @@
             id="print-product-name"
             class="hidden print-only text-xl font-bold mb-4"
           ></h2>
-
           <div class="relative no-print">
             <select
               id="productSelector"
@@ -155,7 +154,6 @@
               >
             </div>
           </div>
-
           <div class="col-span-1">
             <label class="block text-slate-600 font-medium mb-2 text-sm"
               >Hao hụt dự kiến (%)</label
@@ -173,7 +171,6 @@
               >
             </div>
           </div>
-
           <div class="col-span-1">
             <label class="block text-slate-600 font-medium mb-2 text-sm"
               >Trọng lượng tịnh 01 gói</label
@@ -195,8 +192,47 @@
         <hr class="border-slate-100" />
 
         <div>
-          <div class="flex justify-between items-end mb-4">
-            <h3 class="text-lg font-bold text-slate-700">Phân Bổ & Kết Quả</h3>
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 gap-4"
+          >
+            <div>
+              <h3 class="text-lg font-bold text-slate-700 mb-2">
+                Phân Bổ & Kết Quả
+              </h3>
+              <div
+                class="flex gap-4 bg-slate-100 p-1.5 rounded-lg border border-slate-200 no-print"
+              >
+                <label
+                  class="flex items-center gap-2 cursor-pointer px-3 py-1 rounded-md transition-colors hover:bg-white"
+                >
+                  <input
+                    type="radio"
+                    name="calcMode"
+                    value="powder"
+                    checked
+                    onchange="toggleMode()"
+                    class="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span class="font-medium text-sm text-slate-700"
+                    >Theo % Lượng bột</span
+                  >
+                </label>
+                <label
+                  class="flex items-center gap-2 cursor-pointer px-3 py-1 rounded-md transition-colors hover:bg-white"
+                >
+                  <input
+                    type="radio"
+                    name="calcMode"
+                    value="package"
+                    onchange="toggleMode()"
+                    class="w-4 h-4 text-amber-600 focus:ring-amber-500"
+                  />
+                  <span class="font-medium text-sm text-slate-700"
+                    >Theo % Số bao bì</span
+                  >
+                </label>
+              </div>
+            </div>
             <div
               id="alert-box"
               class="text-sm px-3 py-1 rounded-full font-medium hidden"
@@ -213,8 +249,11 @@
                   <th class="p-4 border-b border-slate-200 text-center">
                     Đóng gói
                   </th>
-                  <th class="p-4 border-b border-slate-200 text-center w-32">
-                    Tỷ lệ (%)
+                  <th class="p-4 border-b border-slate-200 text-center w-28">
+                    % Bột
+                  </th>
+                  <th class="p-4 border-b border-slate-200 text-center w-28">
+                    % Bao Bì
                   </th>
                   <th class="p-4 border-b border-slate-200 text-right">
                     SL Bao bì (In Date)
@@ -231,7 +270,7 @@
               <tfoot class="bg-slate-100 font-bold text-slate-700">
                 <tr>
                   <td
-                    colspan="4"
+                    colspan="5"
                     class="p-4 text-right uppercase border-t border-slate-300"
                   >
                     Tổng cộng số lượng gói:
@@ -315,7 +354,6 @@
       // ==========================================
       // LOGIC JAVASCRIPT
       // ==========================================
-
       const selector = document.getElementById("productSelector");
       const tableBody = document.getElementById("skuTableBody");
       const alertBox = document.getElementById("alert-box");
@@ -343,27 +381,56 @@
         currentProduct.skus.forEach((sku, index) => {
           let row = `
                 <tr class="hover:bg-blue-50/50 transition-colors">
-                    <td class="p-4 font-medium text-slate-700">${sku.name}</td>
-                    <td class="p-4 text-center text-slate-500"><span class="bg-slate-200 text-slate-700 py-1 px-2 rounded text-xs font-bold">${sku.packCount} gói</span></td>
-                    <td class="p-4 text-center">
-                        <input type="number" class="ratio-input w-20 text-center font-bold text-blue-600 border-b-2 border-blue-200 focus:border-blue-600 outline-none bg-transparent p-1 transition-all" 
-                               data-pack="${sku.packCount}" 
-                               value="${sku.defaultRatio}" 
-                               oninput="calculate()">
-                    </td>
-                    <td class="p-4 text-right">
-                        <span class="result-cell text-xl font-bold text-emerald-600" id="res-${index}">0</span>
-                        <span class="text-xs text-slate-400 block">Hộp/Túi</span>
-                    </td>
-                    <td class="p-4 text-right">
-                        <span class="result-cell text-xl font-bold text-indigo-600" id="ress-${index}">0</span>
-                        <span class="text-xs text-slate-400 block">Gói</span>
-                    </td>
+                  <td class="p-4 font-medium text-slate-700">${sku.name}</td>
+                  <td class="p-4 text-center text-slate-500"><span class="bg-slate-200 text-slate-700 py-1 px-2 rounded text-xs font-bold">${sku.packCount} gói</span></td>
+                  
+                  <td class="p-4 text-center">
+                    <input type="number" class="ratio-powder w-16 text-center font-bold text-blue-600 border-b-2 border-blue-200 focus:border-blue-600 outline-none bg-transparent p-1 transition-all disabled:opacity-30 disabled:cursor-not-allowed" 
+                           data-pack="${sku.packCount}" 
+                           value="${sku.defaultRatio}" 
+                           oninput="calculate()">
+                  </td>
+
+                  <td class="p-4 text-center">
+                    <input type="number" class="ratio-package w-16 text-center font-bold text-amber-600 border-b-2 border-amber-200 focus:border-amber-600 outline-none bg-transparent p-1 transition-all disabled:opacity-30 disabled:cursor-not-allowed" 
+                           data-pack="${sku.packCount}" 
+                           value="${sku.defaultRatio}" 
+                           oninput="calculate()">
+                  </td>
+
+                  <td class="p-4 text-right">
+                    <span class="result-cell text-xl font-bold text-emerald-600" id="res-${index}">0</span>
+                    <span class="text-xs text-slate-400 block">Hộp/Túi</span>
+                  </td>
+                  <td class="p-4 text-right">
+                    <span class="result-cell text-xl font-bold text-indigo-600" id="ress-${index}">0</span>
+                    <span class="text-xs text-slate-400 block">Gói</span>
+                  </td>
                 </tr>
             `;
           tableBody.innerHTML += row;
         });
 
+        toggleMode(); // Cập nhật trạng thái input và tính toán
+      }
+
+      // Xử lý logic bật/tắt cột nhập liệu tùy theo chế độ
+      function toggleMode() {
+        let mode = document.querySelector(
+          'input[name="calcMode"]:checked',
+        ).value;
+        let powderInputs = document.getElementsByClassName("ratio-powder");
+        let packageInputs = document.getElementsByClassName("ratio-package");
+
+        for (let i = 0; i < powderInputs.length; i++) {
+          if (mode === "powder") {
+            powderInputs[i].disabled = false;
+            packageInputs[i].disabled = true;
+          } else {
+            powderInputs[i].disabled = true;
+            packageInputs[i].disabled = false;
+          }
+        }
         calculate();
       }
 
@@ -375,46 +442,76 @@
         let netGram = currentProduct.netWeight;
         let loss =
           parseFloat(document.getElementById("lossPercent").value) || 0;
-
         let totalGram = totalKg * 1000 * (1 - loss / 100);
 
-        let inputs = document.getElementsByClassName("ratio-input");
+        let mode = document.querySelector(
+          'input[name="calcMode"]:checked',
+        ).value;
+        let grandTotalSticks = 0;
         let totalRatio = 0;
 
-        // Biến mới để tính tổng toàn bộ các gói
-        let grandTotalSticks = 0;
+        // TH1: TÍNH TOÁN THEO % BỘT (Cũ)
+        if (mode === "powder") {
+          let inputs = document.getElementsByClassName("ratio-powder");
+          Array.from(inputs).forEach((input, index) => {
+            let percent = parseFloat(input.value) || 0;
+            totalRatio += percent;
 
-        Array.from(inputs).forEach((input, index) => {
-          let percent = parseFloat(input.value) || 0;
-          totalRatio += percent;
+            let packSize = parseFloat(input.getAttribute("data-pack"));
+            let allocatedPowder = totalGram * (percent / 100);
+            let unitPowder = packSize * netGram;
 
-          let packSize = parseFloat(input.getAttribute("data-pack"));
-          let allocatedPowder = totalGram * (percent / 100);
-          let unitPowder = packSize * netGram;
+            let quantity = 0;
+            if (unitPowder > 0) {
+              quantity = Math.floor(allocatedPowder / unitPowder);
+            }
+            let quantity_stick = quantity * packSize;
 
-          let quantity = 0;
-          let quantity_stick = 0; // Khởi tạo biến này mỗi vòng lặp
+            document.getElementById(`res-${index}`).innerText =
+              quantity.toLocaleString("vi-VN");
+            document.getElementById(`ress-${index}`).innerText =
+              quantity_stick.toLocaleString("vi-VN");
+            grandTotalSticks += quantity_stick;
+          });
+        }
+        // TH2: TÍNH TOÁN THEO % BAO BÌ (Mới)
+        else {
+          let inputs = document.getElementsByClassName("ratio-package");
+          let maxPossibleSticks = Math.floor(totalGram / netGram); // Tối đa số gói nhỏ làm ra được
+          let sumWeighted = 0;
 
-          if (unitPowder > 0) {
-            quantity = Math.floor(allocatedPowder / unitPowder);
-            quantity_stick = quantity * packSize;
-          }
+          // Bước 1: Tính toán tổng trọng số (để tìm hệ số k)
+          Array.from(inputs).forEach((input) => {
+            let percent = parseFloat(input.value) || 0;
+            totalRatio += percent;
+            let packSize = parseFloat(input.getAttribute("data-pack"));
+            sumWeighted += percent * packSize;
+          });
 
-          // Hiển thị từng dòng
-          document.getElementById(`res-${index}`).innerText =
-            quantity.toLocaleString("vi-VN");
-          document.getElementById(`ress-${index}`).innerText =
-            quantity_stick.toLocaleString("vi-VN");
+          // Bước 2: Hệ số phân bổ số lượng bao bì tối đa
+          let k = sumWeighted > 0 ? maxPossibleSticks / sumWeighted : 0;
 
-          // Cộng dồn vào tổng
-          grandTotalSticks += quantity_stick;
-        });
+          // Bước 3: Phân bổ và hiển thị
+          Array.from(inputs).forEach((input, index) => {
+            let percent = parseFloat(input.value) || 0;
+            let packSize = parseFloat(input.getAttribute("data-pack"));
+
+            let quantity = Math.floor(k * percent); // Số lượng bao bì = Hệ số * % bao bì
+            let quantity_stick = quantity * packSize;
+
+            document.getElementById(`res-${index}`).innerText =
+              quantity.toLocaleString("vi-VN");
+            document.getElementById(`ress-${index}`).innerText =
+              quantity_stick.toLocaleString("vi-VN");
+            grandTotalSticks += quantity_stick;
+          });
+        }
 
         // Cập nhật số tổng ở chân bảng
         document.getElementById("grand-total-sticks").innerText =
           grandTotalSticks.toLocaleString("vi-VN");
 
-        // Xử lý Alert Box
+        // Xử lý Alert Box cảnh báo sai %
         alertBox.style.display = "inline-block";
         alertBox.className =
           "text-sm px-4 py-2 rounded-full font-bold shadow-sm transition-all duration-300 ";
